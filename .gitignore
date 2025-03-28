@@ -1,0 +1,54 @@
+# Dependencies
+/node_modules
+/.pnp
+.pnp.js
+
+# Build output
+/dist
+/build
+/out
+
+# Cache
+.cache
+.temp
+.vite
+*.tsbuildinfo
+.eslintcache
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Editor/IDE
+.idea
+.vscode
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+~*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Testing
+/coverage
+/.nyc_output
+
+# Optional
+.serverless/
+.fusebox/
+/dll
+*.local
+
+# Debug
+debug.log
