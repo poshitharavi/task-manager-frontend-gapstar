@@ -34,9 +34,17 @@ interface TasksResponse {
 }
 
 export const TasksService = {
-  getMyTasks: async (sortBy: string): Promise<TasksResponse> => {
+  getMyTasks: async (
+    sortBy: string,
+    sortOrder: "asc" | "desc"
+  ): Promise<TasksResponse> => {
     try {
-      const response = await api.get(`/task/my?sort=${sortBy}`);
+      const response = await api.get(`/task/my`, {
+        params: {
+          sortBy,
+          sortOrder,
+        },
+      });
       return response.data;
     } catch (error: any) {
       throw error.response?.data || { message: "Failed to fetch tasks" };

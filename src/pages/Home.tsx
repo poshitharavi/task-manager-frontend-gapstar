@@ -19,7 +19,7 @@ const Home = () => {
     isLoading,
     error,
     fetchTasks,
-    setSortBy,
+    setSort,
     updateStatus,
   } = useTaskStore();
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -81,14 +81,15 @@ const Home = () => {
             <div className="text-gray-400">
               {counts.active} active tasks, {counts.completed} completed
             </div>
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2">
               <select
                 value={sortBy}
-                onChange={(e) => setSortBy(e.target.value as any)}
+                onChange={(e) => setSort(e.target.value as any)}
                 className="bg-gray-700 text-white px-3 py-1 rounded-lg"
               >
-                <option value="dueDate">Due Date</option>
+                <option value="id">ID</option>
                 <option value="priority">Priority</option>
+                <option value="dueDate">Due Date</option>
                 <option value="status">Status</option>
               </select>
             </div>

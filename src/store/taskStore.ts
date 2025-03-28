@@ -29,11 +29,12 @@ interface TaskState {
   counts: { active: number; completed: number };
   isLoading: boolean;
   error: string | null;
-  sortBy: "dueDate" | "priority" | "status";
+  sortBy: "id" | "priority" | "dueDate" | "status";
+  sortOrder: "asc" | "desc";
 
   updateStatus: (taskId: number, status: "DONE" | "NOT_DONE") => Promise<void>;
   fetchTasks: () => Promise<void>;
-  setSortBy: (sort: "dueDate" | "priority" | "status") => void;
+  setSort: (sortBy: "id" | "priority" | "dueDate" | "status") => void;
 }
 
 export const useTaskStore = create<TaskState>((set, get) => ({
@@ -41,12 +42,16 @@ export const useTaskStore = create<TaskState>((set, get) => ({
   counts: { active: 0, completed: 0 },
   isLoading: false,
   error: null,
-  sortBy: "dueDate",
+  sortBy: "id",
+  sortOrder: "asc",
 
   fetchTasks: async () => {
     set({ isLoading: true, error: null });
     try {
-      const response = await TasksService.getMyTasks(get().sortBy);
+      const response = await TasksService.getMyTasks(
+        get().sortBy,
+        get().sortOrder
+      );
       set({
         tasks: response.body.tasks,
         counts: response.body.counts,
@@ -60,8 +65,17 @@ export const useTaskStore = create<TaskState>((set, get) => ({
     }
   },
 
-  setSortBy: (sort) => {
-    set({ sortBy: sort });
+  setSort: (sortBy) => {
+    set((state) => {
+      // Toggle order if sorting the same column
+      const sortOrder =
+        state.sortBy === sortBy
+          ? state.sortOrder === "asc"
+            ? "desc"
+            : "asc"
+          : "asc";
+      return { sortBy, sortOrder };
+    });
     get().fetchTasks();
   },
 
