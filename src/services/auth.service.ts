@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import api from "./api";
 
 interface LoginResponse {
@@ -15,7 +16,6 @@ export const AuthService = {
     try {
       const response = await api.post("/user/login", { userName, password });
       return response.data;
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       throw error.response?.data || { message: "An error occurred" };
     }
@@ -32,7 +32,6 @@ export const AuthService = {
         password,
       });
       return response.data;
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       throw error.response?.data || { message: "Registration failed" };
     }
