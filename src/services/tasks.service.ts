@@ -93,4 +93,17 @@ export const TasksService = {
       throw error.response?.data || { message: "Task deletion failed" };
     }
   },
+  updateStatus: async (
+    taskId: number,
+    status: "DONE" | "NOT_DONE"
+  ): Promise<TasksResponse> => {
+    try {
+      const response = await api.patch(`/task/update-status/${taskId}`, {
+        status,
+      });
+      return response.data;
+    } catch (error: any) {
+      throw error.response?.data || { message: "Status update failed" };
+    }
+  },
 };

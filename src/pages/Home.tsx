@@ -9,10 +9,19 @@ import CreateTaskModal from "../components/Home/CreateTaskModal";
 import ViewTaskModal from "../components/Home/ViewTaskModal";
 import EditTaskModal from "../components/Home/EditTaskModal";
 import DeleteConfirmationModal from "../components/Home/DeleteConfirmationModal";
+import { useAlertStore } from "../store/alertStore";
 
 const Home = () => {
-  const { tasks, counts, sortBy, isLoading, error, fetchTasks, setSortBy } =
-    useTaskStore();
+  const {
+    tasks,
+    counts,
+    sortBy,
+    isLoading,
+    error,
+    fetchTasks,
+    setSortBy,
+    updateStatus,
+  } = useTaskStore();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedViewTask, setSelectedViewTask] = useState<Task | null>(null);
   const [selectedEditTask, setSelectedEditTask] = useState<Task | null>(null);
@@ -34,6 +43,23 @@ const Home = () => {
 
   const handleDelete = (taskId: number) => {
     setTaskToDelete(taskId);
+  };
+
+  const handleStatusChange = async (
+    taskId: number,
+    currentStatus: "DONE" | "NOT_DONE"
+  ) => {
+    const newStatus = currentStatus === "DONE" ? "NOT_DONE" : "DONE";
+    try {
+      await updateStatus(taskId, newStatus);
+    } catch (error: any) {
+      useAlertStore
+        .getState()
+        .showAlert(
+          "error",
+          error.response?.data?.message || "Failed to update task status"
+        );
+    }
   };
 
   return (
@@ -107,15 +133,18 @@ const Home = () => {
                         {format(new Date(task.dueDate), "MMM dd, yyyy")}
                       </td>
                       <td className="px-4 py-3">
-                        <span
-                          className={`px-2 py-1 rounded-full text-xs ${
+                        <button
+                          onClick={() =>
+                            handleStatusChange(task.id, task.status)
+                          }
+                          className={`px-2 py-1 rounded-full text-xs cursor-pointer ${
                             task.status === "DONE"
-                              ? "bg-green-500"
-                              : "bg-gray-500"
+                              ? "bg-green-500 hover:bg-green-600"
+                              : "bg-gray-500 hover:bg-gray-600"
                           }`}
                         >
                           {task.status.replace("_", " ")}
-                        </span>
+                        </button>
                       </td>
                       <td className="px-4 py-3">
                         <div className="flex gap-2">

@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { create } from "zustand";
 import { TasksService } from "../services/tasks.service";
+import { useAlertStore } from "./alertStore";
 // import { format } from "date-fns";
 
 export interface Task {
@@ -30,6 +31,7 @@ interface TaskState {
   error: string | null;
   sortBy: "dueDate" | "priority" | "status";
 
+  updateStatus: (taskId: number, status: "DONE" | "NOT_DONE") => Promise<void>;
   fetchTasks: () => Promise<void>;
   setSortBy: (sort: "dueDate" | "priority" | "status") => void;
 }
@@ -61,5 +63,37 @@ export const useTaskStore = create<TaskState>((set, get) => ({
   setSortBy: (sort) => {
     set({ sortBy: sort });
     get().fetchTasks();
+  },
+
+  updateStatus: async (taskId, status) => {
+    try {
+      await TasksService.updateStatus(taskId, status);
+      set((state) => ({
+        tasks: state.tasks.map((task) =>
+          task.id === taskId ? { ...task, status } : task
+        ),
+        counts: {
+          ...state.counts,
+          ...(status === "DONE"
+            ? {
+                active: state.counts.active - 1,
+                completed: state.counts.completed + 1,
+              }
+            : {
+                active: state.counts.active + 1,
+                completed: state.counts.completed - 1,
+              }),
+        },
+      }));
+    } catch (error: any) {
+      useAlertStore
+        .getState()
+        .showAlert(
+          "error",
+          error.response?.data?.message || "Failed to update task status"
+        );
+      // Rollback to previous state
+      get().fetchTasks();
+    }
   },
 }));
