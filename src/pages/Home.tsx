@@ -10,6 +10,7 @@ import ViewTaskModal from "../components/Home/ViewTaskModal";
 import EditTaskModal from "../components/Home/EditTaskModal";
 import DeleteConfirmationModal from "../components/Home/DeleteConfirmationModal";
 import { useAlertStore } from "../store/alertStore";
+import { useDebounce } from "../hooks/useDebounce";
 
 const Home = () => {
   const {
@@ -18,18 +19,26 @@ const Home = () => {
     sortBy,
     isLoading,
     error,
+    searchTerm,
     fetchTasks,
     setSort,
     updateStatus,
+    setSearchTerm,
   } = useTaskStore();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedViewTask, setSelectedViewTask] = useState<Task | null>(null);
   const [selectedEditTask, setSelectedEditTask] = useState<Task | null>(null);
   const [taskToDelete, setTaskToDelete] = useState<number | null>(null);
+  const [localSearch, setLocalSearch] = useState(searchTerm);
+  const debouncedSearch = useDebounce(localSearch, 500);
 
   useEffect(() => {
     fetchTasks();
   }, []);
+
+  useEffect(() => {
+    setSearchTerm(debouncedSearch);
+  }, [debouncedSearch, setSearchTerm]);
 
   const handleView = (taskId: number) => {
     const task = tasks.find((t) => t.id === taskId);
@@ -68,10 +77,19 @@ const Home = () => {
 
       <div className="pt-8 flex items-center justify-center">
         <BodyCard>
-          <div className="flex justify-end mb-4">
+          <div className="flex justify-between items-center mb-4 gap-4">
+            <div className="flex-1">
+              <input
+                type="text"
+                placeholder="Search tasks..."
+                className="w-full bg-gray-700 text-white px-4 py-2 rounded-lg"
+                value={localSearch}
+                onChange={(e) => setLocalSearch(e.target.value)}
+              />
+            </div>
             <button
               onClick={() => setIsModalOpen(true)}
-              className="p-2 bg-green-500 rounded-lg hover:bg-green-600"
+              className="p-2 bg-green-500 rounded-lg hover:bg-green-600 shrink-0"
               title="Create New Task"
             >
               <FiPlus className="w-5 h-5" />

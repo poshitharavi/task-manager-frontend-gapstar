@@ -31,10 +31,12 @@ interface TaskState {
   error: string | null;
   sortBy: "id" | "priority" | "dueDate" | "status";
   sortOrder: "asc" | "desc";
+  searchTerm: string;
 
   updateStatus: (taskId: number, status: "DONE" | "NOT_DONE") => Promise<void>;
   fetchTasks: () => Promise<void>;
   setSort: (sortBy: "id" | "priority" | "dueDate" | "status") => void;
+  setSearchTerm: (term: string) => void;
 }
 
 export const useTaskStore = create<TaskState>((set, get) => ({
@@ -44,13 +46,15 @@ export const useTaskStore = create<TaskState>((set, get) => ({
   error: null,
   sortBy: "id",
   sortOrder: "asc",
+  searchTerm: "",
 
   fetchTasks: async () => {
     set({ isLoading: true, error: null });
     try {
       const response = await TasksService.getMyTasks(
         get().sortBy,
-        get().sortOrder
+        get().sortOrder,
+        get().searchTerm
       );
       set({
         tasks: response.body.tasks,
@@ -109,5 +113,9 @@ export const useTaskStore = create<TaskState>((set, get) => ({
       // Rollback to previous state
       get().fetchTasks();
     }
+  },
+  setSearchTerm: (term) => {
+    set({ searchTerm: term });
+    get().fetchTasks();
   },
 }));

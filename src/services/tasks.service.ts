@@ -36,15 +36,20 @@ interface TasksResponse {
 export const TasksService = {
   getMyTasks: async (
     sortBy: string,
-    sortOrder: "asc" | "desc"
+    sortOrder: "asc" | "desc",
+    title?: string
   ): Promise<TasksResponse> => {
     try {
-      const response = await api.get(`/task/my`, {
-        params: {
-          sortBy,
-          sortOrder,
-        },
-      });
+      const params: Record<string, any> = {
+        sortBy,
+        sortOrder,
+      };
+
+      if (title && title.trim()) {
+        params.title = title;
+      }
+
+      const response = await api.get(`/task/my`, { params });
       return response.data;
     } catch (error: any) {
       throw error.response?.data || { message: "Failed to fetch tasks" };
