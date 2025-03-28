@@ -3,7 +3,7 @@ import { create } from "zustand";
 import { TasksService } from "../services/tasks.service";
 // import { format } from "date-fns";
 
-interface Task {
+export interface Task {
   id: number;
   title: string;
   status: "NOT_DONE" | "DONE";
@@ -16,6 +16,10 @@ interface Task {
     id: number;
     dependentId: number;
     prerequisiteId: number;
+    prerequisite: {
+      id: number;
+      title: string;
+    };
   }>;
 }
 

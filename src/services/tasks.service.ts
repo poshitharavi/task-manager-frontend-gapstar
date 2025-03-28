@@ -14,6 +14,10 @@ interface Task {
     id: number;
     dependentId: number;
     prerequisiteId: number;
+    prerequisite: {
+      id: number;
+      title: string;
+    };
   }>;
 }
 
@@ -36,6 +40,57 @@ export const TasksService = {
       return response.data;
     } catch (error: any) {
       throw error.response?.data || { message: "Failed to fetch tasks" };
+    }
+  },
+  createTask: async (taskData: {
+    title: string;
+    dueDate: string;
+    priority: "LOW" | "MEDIUM" | "HIGH";
+    recurrence: "DAILY" | "WEEKLY" | "MONTHLY" | "NONE";
+    isDependent: boolean;
+    prerequisite?: number;
+  }): Promise<TasksResponse> => {
+    try {
+      const payload = { ...taskData };
+      if (!payload.isDependent) {
+        delete payload.prerequisite;
+      }
+      const response = await api.post("/task/new", payload);
+      return response.data;
+    } catch (error: any) {
+      throw error.response?.data || { message: "Task creation failed" };
+    }
+  },
+  updateTask: async (
+    taskId: number,
+    taskData: {
+      title: string;
+      dueDate: string;
+      priority: "LOW" | "MEDIUM" | "HIGH";
+      recurrence: "DAILY" | "WEEKLY" | "MONTHLY" | "NONE";
+      isDependent: boolean;
+      prerequisite?: number;
+    }
+  ): Promise<TasksResponse> => {
+    try {
+      const payload = { ...taskData };
+      if (!payload.isDependent) {
+        delete payload.prerequisite;
+      }
+      const response = await api.patch(`/task/update/${taskId}`, payload);
+      return response.data;
+    } catch (error: any) {
+      throw error.response?.data || { message: "Task update failed" };
+    }
+  },
+  deleteTask: async (
+    taskId: number
+  ): Promise<{ statusCode: number; message: string }> => {
+    try {
+      const response = await api.delete(`/task/delete/${taskId}`);
+      return response.data;
+    } catch (error: any) {
+      throw error.response?.data || { message: "Task deletion failed" };
     }
   },
 };
