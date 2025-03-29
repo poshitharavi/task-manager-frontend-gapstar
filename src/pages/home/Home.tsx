@@ -1,16 +1,16 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from "react";
 import { FiEye, FiEdit, FiTrash, FiPlus } from "react-icons/fi";
-import { Task, useTaskStore } from "../store/taskStore";
+import { Task, useTaskStore } from "../../store/taskStore";
 import { format } from "date-fns";
-import Navbar from "../components/ui/Navbar";
-import BodyCard from "../components/ui/BodyCard";
-import CreateTaskModal from "../components/Home/CreateTaskModal";
-import ViewTaskModal from "../components/Home/ViewTaskModal";
-import EditTaskModal from "../components/Home/EditTaskModal";
-import DeleteConfirmationModal from "../components/Home/DeleteConfirmationModal";
-import { useAlertStore } from "../store/alertStore";
-import { useDebounce } from "../hooks/useDebounce";
+import Navbar from "../../components/ui/Navbar";
+import BodyCard from "../../components/ui/BodyCard";
+import CreateTaskModal from "../../components/Home/CreateTaskModal";
+import ViewTaskModal from "../../components/Home/ViewTaskModal";
+import EditTaskModal from "../../components/Home/EditTaskModal";
+import DeleteConfirmationModal from "../../components/Home/DeleteConfirmationModal";
+import { useAlertStore } from "../../store/alertStore";
+import { useDebounce } from "../../hooks/useDebounce";
 
 const Home = () => {
   const {
